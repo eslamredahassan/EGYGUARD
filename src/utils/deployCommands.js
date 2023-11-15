@@ -143,26 +143,6 @@ module.exports = async (client, config) => {
           ],
         },
         {
-          name: "about",
-          description: `[Dev] Learn more about EGYGUARD bot`,
-          type: "CHAT_INPUT",
-        },
-        {
-          name: "feedback",
-          description: `[Dev] Send your feedback about EGYGUARD to his developer`,
-          type: "CHAT_INPUT",
-        },
-        {
-          name: "report_bug",
-          description: `[Dev] Report a bug to the developer`,
-          type: "CHAT_INPUT",
-        },
-        {
-          name: "contact_dev",
-          description: `[Dev] Send a message to EGYGUARD developer`,
-          type: "CHAT_INPUT",
-        },
-        {
           name: "status",
           description: `[Dev] Check EGYGUARD Uptime`,
           type: "CHAT_INPUT",
