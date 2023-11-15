@@ -5,17 +5,6 @@ module.exports = async (client, config) => {
     try {
       const { guild, channel, member } = newState;
 
-      // Additional checks to prevent interference with other commands
-      if (
-        !channel ||
-        channel.id !== config.customVoice ||
-        !member.roles.cache.has(config.commandRole) || // Check for a specific role
-        channel.type !== "GUILD_TEXT" || // Check for a specific text channel
-        channel.id !== config.commandTextChannel
-      ) {
-        return;
-      }
-
       switch (true) {
         case !channel || channel.id !== config.customVoice:
           // Handle other cases if needed
