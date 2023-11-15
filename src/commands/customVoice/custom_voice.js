@@ -90,7 +90,7 @@ module.exports = async (client, config) => {
             `\x1b[33m ${moment(Date.now()).format("LT")}`,
             `\x1b[31m ${member.user.username}`,
             `\x1b[32m CREATED`,
-            `\x1b[33m 🎮 ︱${member.user.username}'s Team`,
+            `\x1b[33m 🎮  ︱${member.user.username}'s Team`,
           );
 
           // Save the channel information to the database
