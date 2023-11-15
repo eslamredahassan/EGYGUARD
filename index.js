@@ -38,6 +38,34 @@ client.on("ready", async () => {
     `\x1b[31m ${client.user.tag}`,
     `\x1b[32m ONLINE`,
   );
+
+  const loadEvents = (client, config, directory) => {
+    fs.readdirSync(directory).forEach((file) => {
+      const fullPath = path.join(directory, file);
+      const stat = fs.statSync(fullPath);
+
+      if (stat.isDirectory()) {
+        loadEvents(client, config, fullPath); // Recursively load events in subdirectories
+      } else if (file.endsWith(".js")) {
+        try {
+          const event = require(fullPath);
+          if (typeof event === "function") {
+            event(client, config);
+            //console.log(`Event loaded: ${file}`);
+          } else {
+            console.error(
+              `Invalid export in file ${file}. Expected a function.`,
+            );
+          }
+        } catch (error) {
+          console.error(`Error loading event file ${file}:`, error.message);
+        }
+      }
+    });
+  };
+
+  const eventsDirectory = path.join(__dirname, "src/events");
+  loadEvents(client, config, eventsDirectory);
 });
 
 client.once("ready", async () => {
