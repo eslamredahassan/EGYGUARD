@@ -10,7 +10,7 @@ module.exports = {
   voiceCategory: process.env.voiceCategory,
   customVoice: process.env.customVoice,
   statusChannel: process.env.statusChannel,
-  welcomeChannel: process.evn.welcomeChannel,
+  welcomeChannel: process.env.welcomeChannel,
   log: process.env.log,
   //--------------------------------------//
 
