@@ -1,5 +1,7 @@
 const CustomChannel = require("../../../src/database/models/custom_voice");
 
+const moment = require("moment");
+
 module.exports = async (client, config) => {
   client.on("voiceStateUpdate", async (oldState, newState) => {
     try {
@@ -19,7 +21,7 @@ module.exports = async (client, config) => {
 
           // Create a new voice channel for the user
           const newChannel = await guild.channels.create(
-            `🎮︱${member.user.username}'s Channel`,
+            `🎮︱${member.user.username}'s Team`,
             {
               type: "GUILD_VOICE",
               parent: channel.parentId, // You may customize this
@@ -82,6 +84,14 @@ module.exports = async (client, config) => {
 
           // Move the user to the new channel
           await member.voice.setChannel(newChannel);
+          console.log(
+            `\x1b[0m`,
+            `\x1b[33m 〢`,
+            `\x1b[33m ${moment(Date.now()).format("LT")}`,
+            `\x1b[31m ${member.user.username}`,
+            `\x1b[32m CREATED`,
+            `\x1b[33m 🎮 ︱${member.user.username}'s Team`,
+          );
 
           // Save the channel information to the database
           await CustomChannel.create({
