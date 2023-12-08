@@ -67,6 +67,27 @@ module.exports = async (client, config) => {
             },
           ],
         },
+
+        {
+          name: "warn",
+          description: "Warn a member",
+          options: [
+            {
+              name: "user",
+              description: "The user to warn him.",
+              type: 6, // User Type
+              required: true,
+            },
+            {
+              name: "reason",
+              description: "The reason for the warning.",
+              type: 3, // String Type
+              required: true,
+              min_length: 1,
+              max_length: 512,
+            },
+          ],
+        },
         {
           name: "kick",
           description: "Kick member from the server",
