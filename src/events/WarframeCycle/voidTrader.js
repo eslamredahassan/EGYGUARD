@@ -1,47 +1,114 @@
 const axios = require("axios");
+const cheerio = require("cheerio");
 const fs = require("fs");
-const config = require("../../src/config.js");
+const { MessageEmbed } = require("discord.js");
+const config = require("../../../src/config.js");
+const assest = JSON.parse(fs.readFileSync("./src/assest/assest.json"));
+const emoji = assest.emoji;
+const color = assest.color;
+const role = assest.role;
 
 const cycleConfig = JSON.parse(fs.readFileSync("./src/config.json"));
 const API = cycleConfig.warframeAPI;
 const Channel = cycleConfig.WarframeCycle;
-const GUILD_ID = config.guildID;
 
-const BARO_EMOJI = "🛒"; // Adjust the emoji as needed
+const mockResponse = {
+  data: {
+    active: true,
+    location: "Strata Relay (Earth)",
+    inventory: ["Primed Flow", "Primed Ammo Stock", "Primed Animal Instinct"],
+    activation: "2023-12-08T08:22:00.000Z",
+    expiry: "2023-12-17T14:00:00.000Z",
+  },
+};
+let interval;
 
 module.exports = async (client, config) => {
   async function updateBaroKiTeer() {
     try {
       const response = await axios.get(API.baroAPI);
-      const isAvailable = response.data.active;
-      const location = response.data.location || "Unknown";
-      const inventory = response.data.inventory || [];
+      const isActive = response.data.active;
 
-      const guild = client.guilds.cache.get(GUILD_ID);
-      if (!guild) {
-        console.log("Guild not found in cache.");
-        return;
-      }
+      if (isActive !== undefined) {
+        const location = response.data.location || "Unknown";
+        const inventory = response.data.inventory || [];
+        const start = response.data.activation || "Unknown";
+        const end = response.data.expiry || "Unknown";
+        const baroCycle = `${emoji.baro} Baro Ki'Teer`;
 
-      const channel = guild.channels.cache.get(Channel.baro);
+        const guild = client.guilds.cache.get(config.guildID);
+        if (!guild) {
+          console.log("Guild not found in cache.");
+          return;
+        }
 
-      if (isAvailable !== undefined) {
-        const baroStatus = isAvailable ? "Available" : "Not Available";
-        const baroCycle = `${BARO_EMOJI}︱Baro Ki'Teer`;
-
+        const channel = guild.channels.cache.get(Channel.publicChat);
         if (channel && channel.type === "GUILD_TEXT") {
-          if (isAvailable) {
-            const message = `**${baroCycle} ${baroStatus} - ${location}**\n\nBaro Ki'Teer has arrived! Check out his inventory:\n${formatInventory(
-              inventory,
-            )}`;
-            channel.send(message);
+          if (isActive) {
+            const startTimestamp = Math.floor(Date.parse(start) / 1000);
+            const endTimeStamp = new Date(end).getTime();
+
+            const inventoryWithLinks = inventory.map((item, index) => {
+              const wikiLink = `https://warframe.fandom.com/wiki/${encodeURIComponent(
+                item.replace(/\s+/g, "_"),
+              )}`;
+              const mark =
+                index === inventory.length - 1 ? emoji.mark : emoji.midMark;
+              return `${mark} [${item}](${wikiLink})`;
+            });
+
+            const embed = new MessageEmbed()
+              //.setTitle(`${baroCycle} ${isActive ? "has arrived" : "didn't Arrive yet"}`,)
+              .setImage("https://i.imgur.com/0KhYPrk.gif")
+              .setColor(isActive ? color.gray : color.gray)
+              .setDescription(
+                `## ${emoji.inventory} Inventory\n**${inventoryWithLinks.join(
+                  "\n",
+                )}**`,
+              )
+              .setFields([
+                {
+                  name: `${emoji.location} Leaves`,
+                  value: `${emoji.mark} ${location}`,
+                  inline: false,
+                },
+                {
+                  name: `${emoji.arrived} Arrived`,
+                  value: `${emoji.mark} <t:${startTimestamp}:R>`,
+                  inline: true,
+                },
+                {
+                  name: `${emoji.leave} Leaves`,
+                  value: `${emoji.mark} <t:${Math.floor(
+                    endTimeStamp / 1000,
+                  )}:R>`,
+                  inline: true,
+                },
+              ])
+              .setFooter({
+                text:
+                  client.user.username +
+                  " ・ Powered by Warframe API and warframe.fandom.com",
+                iconURL: client.user.displayAvatarURL({ dynamic: true }),
+              });
+
+            try {
+              await channel.send({
+                content:
+                  role.alert +
+                  " baro ki'teer has arrived, check out his inventory",
+                embeds: [embed],
+              });
+              console.log("Message sent successfully");
+              clearInterval(interval); // Clear the interval after sending the message
+            } catch (error) {
+              console.error("Error sending message:", error.message);
+            }
+          } else {
+            return;
           }
-          await channel.setName(`${baroCycle} ${baroStatus} - ${location}`);
-          console.log(
-            `Updated voice channel name to Baro Ki'Teer: ${baroCycle} ${baroStatus} - ${location}`,
-          );
         } else {
-          console.log("Text channel not found or invalid channel type.");
+          console.log("Chat channel not found or invalid channel type.");
         }
       } else {
         console.log(
@@ -54,13 +121,6 @@ module.exports = async (client, config) => {
     }
   }
 
-  function formatInventory(inventory) {
-    if (!inventory || inventory.length === 0) {
-      return "No items available.";
-    }
-
-    return inventory.map((item) => `- ${item}`).join("\n");
-  }
-
-  setInterval(updateBaroKiTeer, 60 * 1000); // Update every minute
+  // Set interval to update every minute (adjust as needed)
+  interval = setInterval(updateBaroKiTeer, 5000);
 };

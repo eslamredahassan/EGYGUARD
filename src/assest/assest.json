@@ -1,5 +1,19 @@
 {
   "emoji": {
-    "ducat": "<:OrokinDucats:1182897382501908572>"
+    "ducat": "<:OrokinDucats:1182897382501908572>",
+    "midMark": "<:mid_mark:1173311852873253004>",
+    "mark": "<:mark:1173311849261965313>",
+    "leave": "<:planeticket:1182942987651657759>",
+    "inventory": "<:inventory:1182944399584407572>",
+    "location": "<:place:1182945245411934350>",
+    "arrived": "<:justarrived:1182946175196876911>",
+    "baro": "<:destination:1182947089823576094>"
+  },
+  "color": {
+    "gray": "#2b2d31",
+    "pink": "DARK_VIVID_PINK"
+  },
+  "role": {
+    "alert": "<@&1070934269704294420>"
   }
 }

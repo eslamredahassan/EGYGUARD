@@ -1,6 +1,6 @@
 const axios = require("axios");
 const fs = require("fs");
-const config = require("../../src/config.js");
+const config = require("../../../src/config.js");
 
 const cycleConfig = JSON.parse(fs.readFileSync("./src/config.json"));
 const API = cycleConfig.warframeAPI;

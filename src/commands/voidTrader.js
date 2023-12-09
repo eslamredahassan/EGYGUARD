@@ -4,6 +4,7 @@ const { MessageEmbed } = require("discord.js");
 const config = require("../../src/config.js");
 const assest = JSON.parse(fs.readFileSync("./src/assest/assest.json"));
 const emoji = assest.emoji;
+const color = assest.color;
 
 const cycleConfig = JSON.parse(fs.readFileSync("./src/config.json"));
 const API = cycleConfig.warframeAPI;
@@ -28,31 +29,70 @@ module.exports = async (client, config) => {
         const inventory = response.data.inventory || [];
         const start = response.data.activation || "Unknown";
         const end = response.data.expiry || "Unknown";
-        const baroCycle = `${emoji.ducat} Baro Ki'Teer`;
+        const baroCycle = `${emoji.baro} Baro Ki'Teer`;
 
         if (interaction.channel && interaction.channel.type === "GUILD_TEXT") {
+          const startTimeStamp = Math.floor(Date.parse(start) / 1000);
+          const endTimeStamp = Math.floor(Date.parse(end) / 1000);
+
           const embed = new MessageEmbed()
             .setTitle(
-              `${baroCycle} ${isActive ? "Available" : "Not Available"}`,
+              `${baroCycle} ${isActive ? "Arrived" : "Didin't Arrive Yet"}`,
             )
             .setImage("https://i.imgur.com/0KhYPrk.gif")
-            .setColor(isActive ? "#00ff00" : "#ff0000");
+            .setColor(isActive ? color.gray : color.gray);
 
           if (isActive) {
-            embed.setDescription(
-              `${
-                emoji.ducat
-              } Baro Ki'Teer has arrived! Check out his inventory:\n${formatInventory(
-                inventory,
-              )}\n\n**Start Time:** ${start}\n**End Time:** ${end}`,
-            );
+            embed
+              .setDescription(
+                `## ${emoji.inventory} Inventory\n**${inventoryWithLinks.join(
+                  "\n",
+                )}**`,
+              )
+              .setFields([
+                {
+                  name: `${emoji.location} Leaves`,
+                  value: `${emoji.mark} ${location}`,
+                  inline: false,
+                },
+                {
+                  name: `${emoji.arrived} Arrived`,
+                  value: `${emoji.mark} <t:${startTimeStamp}:R>`,
+                  inline: true,
+                },
+                {
+                  name: `${emoji.leave} Leaves`,
+                  value: `${emoji.mark} <t:${endTimeStamp}:R>`,
+                  inline: true,
+                },
+              ])
+              .setFooter({
+                text:
+                  client.user.username +
+                  " ・ Powered by Warframe API and warframe.fandom.com",
+                iconURL: client.user.displayAvatarURL({ dynamic: true }),
+              });
           } else {
-            const startTimeStamp = Date.parse(start);
-            embed.setDescription(
-              `### Baro Ki'Teer is currently not available\n**He will be available <t:${Math.floor(
-                startTimeStamp / 1000,
-              )}:R> in ${location}.**`,
-            );
+            embed
+              ///.setDescription(`### ${emoji.mark} Baro Ki'Teer didn't arrive yet` )
+              .setFields([
+                {
+                  name: `${emoji.arrived} Arrive`,
+                  value: `${emoji.mark} <t:${startTimeStamp}:R>`,
+                  inline: true,
+                },
+                {
+                  name: `${emoji.location} Location`,
+                  value: `${emoji.mark} ${location}`,
+                  inline: true,
+                },
+              ])
+              .setFooter({
+                text:
+                  client.user.username +
+                  " ・ Powered by Warframe API and warframe.fandom.com",
+                iconURL: client.user.displayAvatarURL({ dynamic: true }),
+              });
           }
 
           interaction.reply({ embeds: [embed], ephemeral: true });
