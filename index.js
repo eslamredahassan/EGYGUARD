@@ -39,28 +39,59 @@ client.on("ready", async () => {
     `\x1b[32m ONLINE`,
   );
 
-  // The directory where your select menu files are stored
   const eventsDirectory = path.join(__dirname, "src/events");
-  // Read all files in the directory
-  fs.readdir(eventsDirectory, (error, files) => {
-    if (error) {
-      console.error(
-        `\x1b[0m`,
-        `\x1b[33m 〢`,
-        `\x1b[33m ${moment(Date.now()).format("LT")}`,
-        `\x1b[31m Error while reading events directory:`,
-        `\x1b[35m$ ${error.message}`,
-      );
-      return;
-    }
-    files.forEach((file) => {
-      if (file.endsWith(".js")) {
-        const eventsPath = path.join(eventsDirectory, file);
-        const events = require(eventsPath);
-        events(client, config);
+
+  function readFilesRecursively(directory) {
+    fs.readdir(directory, (error, files) => {
+      if (error) {
+        console.error(
+          `\x1b[0m`,
+          `\x1b[33m 〢`,
+          `\x1b[33m ${moment(Date.now()).format("LT")}`,
+          `\x1b[31m Error while reading directory:`,
+          `\x1b[35m$ ${error.message}`,
+        );
+        return;
       }
+
+      files.forEach((file) => {
+        const filePath = path.join(directory, file);
+
+        fs.stat(filePath, (err, stat) => {
+          if (err) {
+            console.error(
+              `\x1b[0m`,
+              `\x1b[33m 〢`,
+              `\x1b[33m ${moment(Date.now()).format("LT")}`,
+              `\x1b[31m Error while reading file:`,
+              `\x1b[35m$ ${err.message}`,
+            );
+            return;
+          }
+
+          if (stat.isDirectory()) {
+            // Recursively read files in subdirectory
+            readFilesRecursively(filePath);
+          } else if (file.endsWith(".js")) {
+            // Load and execute events from the file
+            const events = require(filePath);
+            if (typeof events === "function") {
+              events(client, config);
+            } else {
+              console.error(
+                `\x1b[0m`,
+                `\x1b[33m 〢`,
+                `\x1b[33m ${moment(Date.now()).format("LT")}`,
+                `\x1b[31m Invalid export in file ${file}. Expected a function.`,
+              );
+            }
+          }
+        });
+      });
     });
-  });
+  }
+  // Start reading files from the events directory
+  readFilesRecursively(eventsDirectory);
 });
 
 client.once("ready", async () => {
