@@ -7,11 +7,7 @@ module.exports = async (client, config) => {
 
   // Handle the interactionCreate event for slash commands
   client.on("interactionCreate", async (interaction) => {
-    if (!interaction.isCommand()) return;
-
-    const { commandName, options } = interaction;
-
-    if (commandName === "unban") {
+    if (!interaction.isCommand() && interaction.commandName == "unban") {
       // Check if the bot has the ADMINISTRATOR permission
 
       await interaction.deferReply({ ephemeral: true });

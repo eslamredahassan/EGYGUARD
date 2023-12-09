@@ -2,11 +2,13 @@
   "warframeAPI": {
     "cetusAPI": "https://api.warframestat.us/pc/cetusCycle/",
     "vallisAPI": "https://api.warframestat.us/pc/vallisCycle/",
-    "cambionAPI": "https://api.warframestat.us/pc/cambionCycle/"
+    "cambionAPI": "https://api.warframestat.us/pc/cambionCycle/",
+    "baroAPI": "https://api.warframestat.us/pc/voidTrader/"
   },
   "WarframeCycle": {
     "cetus": "1182860042119155752",
     "vallis": "1182873205837414460",
-    "cambion": "1182881114801590312"
+    "cambion": "1182881114801590312",
+    "baro": "1182890443831246940"
   }
 }

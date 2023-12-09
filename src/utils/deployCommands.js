@@ -193,6 +193,11 @@ module.exports = async (client, config) => {
             },
           ],
         },
+        {
+          name: "baro",
+          description: `Check when baro ki'teer will be available`,
+          type: "CHAT_INPUT",
+        },
       ]);
       console.log(
         `\x1b[0m`,
