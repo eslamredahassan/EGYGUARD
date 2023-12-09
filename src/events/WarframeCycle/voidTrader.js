@@ -68,7 +68,7 @@ module.exports = async (client, config) => {
               )
               .setFields([
                 {
-                  name: `${emoji.location} Leaves`,
+                  name: `${emoji.location} Location`,
                   value: `${emoji.mark} ${location}`,
                   inline: false,
                 },
