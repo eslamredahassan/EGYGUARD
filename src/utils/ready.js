@@ -12,7 +12,8 @@ module.exports = async (client, config) => {
 
       // Use ☀️ for day and 🌙 for night
       const stateEmoji = state === "day" ? "☀️" : "🌙";
-      return `${stateEmoji}${timeLeft}`;
+      const formattedTimeLeft = timeLeft.replace(/\d+s$/, ""); // Remove seconds
+      return `${stateEmoji}${formattedTimeLeft}`;
     } catch (error) {
       console.error("Error fetching Warframe world time:", error);
       return "Unknown";
@@ -26,7 +27,8 @@ module.exports = async (client, config) => {
 
       // Use ☀️ for warm and ❄ for cold
       const stateEmoji = state === "warm" ? "☀️" : "❄️";
-      return `${stateEmoji}${timeLeft}`;
+      const formattedTimeLeft = timeLeft.replace(/\d+s$/, ""); // Remove seconds
+      return `${stateEmoji}${formattedTimeLeft}`;
     } catch (error) {
       console.error("Error fetching Warframe world time:", error);
       return "Unknown";
@@ -40,7 +42,8 @@ module.exports = async (client, config) => {
 
       // Use ☀️ for warm and ❄ for cold
       const stateEmoji = state === "warm" ? "💥" : "💦";
-      return `${stateEmoji}${timeLeft}`;
+      const formattedTimeLeft = timeLeft.replace(/\d+s$/, ""); // Remove seconds
+      return `${stateEmoji}${formattedTimeLeft}`;
     } catch (error) {
       console.error("Error fetching Warframe world time:", error);
       return "Unknown";
@@ -69,7 +72,7 @@ module.exports = async (client, config) => {
     }
   }
 
-  setInterval(pickPresence, 10000);
+  setInterval(pickPresence, 10 * 1000); // Update every minute
 
   console.log(
     `\x1b[0m`,

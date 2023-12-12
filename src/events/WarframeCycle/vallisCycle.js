@@ -41,22 +41,48 @@ module.exports = async (client, config) => {
           if (channel && channel.type === "GUILD_VOICE") {
             await channel.setName(`${vallisCycle} ${timeLeft}`);
             console.log(
-              `Updated voice channel name to Vallis Cycle: ${vallisCycle} ${timeLeft}`,
+              `\x1b[0m`,
+              `\x1b[33m 〢`,
+              `\x1b[33m ${moment(Date.now()).format("LT")}`,
+              `\x1b[31m Vallis Cycle:`,
+              `\x1b[32m ${vallisCycle} ${timeLeft}`,
             );
           } else {
-            console.log("Voice channel not found or invalid channel type.");
+            console.log(
+              `\x1b[0m`,
+              `\x1b[33m 〢`,
+              `\x1b[33m ${moment(Date.now()).format("LT")}`,
+              `\x1b[31m Error in Vallis Cycle:`,
+              `\x1b[32m Voice channel not found or invalid channel type`,
+            );
           }
         } else {
-          console.log("Time string format does not match expected pattern.");
+          console.log(
+            `\x1b[0m`,
+            `\x1b[33m 〢`,
+            `\x1b[33m ${moment(Date.now()).format("LT")}`,
+            `\x1b[31m Error in Vallis Cycle:`,
+            `\x1b[32m Time string format does not match expected pattern`,
+          );
         }
       } else {
         console.log(
-          "shortString is undefined in the Vallis API response:",
-          response,
+          `\x1b[0m`,
+          `\x1b[33m 〢`,
+          `\x1b[33m ${moment(Date.now()).format("LT")}`,
+          `\x1b[31m Error in Vallis Cycle -`,
+          `\x1b[32m shortString is undefined in the Vallis API response:`,
+          `\x1b[32m ${response}`,
         );
       }
     } catch (error) {
-      console.error("Error updating Vallis cycle:", error.message);
+      console.error(
+        `\x1b[0m`,
+        `\x1b[33m 〢`,
+        `\x1b[33m ${moment(Date.now()).format("LT")}`,
+        `\x1b[31m Error in Vallis Cycle:`,
+        `\x1b[32m ${error.message}`,
+      );
     }
   }
 

@@ -46,22 +46,48 @@ module.exports = async (client, config) => {
           if (channel && channel.type === "GUILD_VOICE") {
             await channel.setName(`${cambionCycle} ${timeLeft}`);
             console.log(
-              `Updated voice channel name to Cambion Cycle: ${cambionCycle} ${timeLeft}`,
+              `\x1b[0m`,
+              `\x1b[33m 〢`,
+              `\x1b[33m ${moment(Date.now()).format("LT")}`,
+              `\x1b[31m Cambion Cycle:`,
+              `\x1b[32m ${cambionCycle} ${timeLeft}`,
             );
           } else {
-            console.log("Voice channel not found or invalid channel type.");
+            console.log(
+              `\x1b[0m`,
+              `\x1b[33m 〢`,
+              `\x1b[33m ${moment(Date.now()).format("LT")}`,
+              `\x1b[31m Error in Cambion Cycle:`,
+              `\x1b[32m Voice channel not found or invalid channel type`,
+            );
           }
         } else {
-          console.log("Time string format does not match expected pattern.");
+          console.log(
+            `\x1b[0m`,
+            `\x1b[33m 〢`,
+            `\x1b[33m ${moment(Date.now()).format("LT")}`,
+            `\x1b[31m Error in Cambion Cycle:`,
+            `\x1b[32m Time string format does not match expected pattern`,
+          );
         }
       } else {
         console.log(
-          "Cambion state is undefined in the API response:",
-          response,
+          `\x1b[0m`,
+          `\x1b[33m 〢`,
+          `\x1b[33m ${moment(Date.now()).format("LT")}`,
+          `\x1b[31m Error in Cambion Cycle -`,
+          `\x1b[32m API response does not contain required data`,
+          `\x1b[33m ${response}`,
         );
       }
     } catch (error) {
-      console.error("Error updating Cambion cycle:", error.message);
+      console.log(
+        `\x1b[0m`,
+        `\x1b[33m 〢`,
+        `\x1b[33m ${moment(Date.now()).format("LT")}`,
+        `\x1b[31m Error in Cambion Cycle:`,
+        `\x1b[32m ${error.message}`,
+      );
     }
   }
 
