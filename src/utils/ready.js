@@ -14,6 +14,7 @@ module.exports = async (client, config) => {
         // Use ☀️ for day and 🌙 for night
         const stateEmoji = state === "day" ? "☀️" : "🌙";
 
+        // Update the getWarframeCetus function
         if (timeLeft && /((\d+)h )?(\d+)m (\d+)s/.test(timeLeft)) {
           // Extract hours, minutes, and seconds
           const timeComponents = timeLeft.match(/((\d+)h\s*)?(\d+)m\s*(\d+)s/);
@@ -97,19 +98,23 @@ module.exports = async (client, config) => {
         const stateEmoji = state === "warm" ? "💥" : "💦";
 
         // Check if timeLeft is not null and in the expected format
-        if (timeLeft && /\d+m \d+s/.test(timeLeft)) {
-          // Remove seconds
-          const formattedTimeLeft = timeLeft.replace(/\d+s$/, "");
+        if (timeLeft && /((\d+)h )?(\d+)m (\d+)s/.test(timeLeft)) {
+          // Extract hours, minutes, and seconds
+          const timeComponents = timeLeft.match(/((\d+)h\s*)?(\d+)m\s*(\d+)s/);
+          const hours = parseInt(timeComponents[2], 10) || 0;
+          const minutes = parseInt(timeComponents[3], 10);
+
+          let formattedTimeLeft = "";
+
+          // Display hours if it's not 0
+          if (hours > 0) {
+            formattedTimeLeft += `${hours}h `;
+          }
+
+          // Display minutes
+          formattedTimeLeft += `${minutes}m`;
+
           return `${stateEmoji}${formattedTimeLeft}`;
-        } else {
-          console.error(
-            `\x1b[0m`,
-            `\x1b[33m 〢`,
-            `\x1b[33m ${moment(Date.now()).format("LT")}`,
-            `\x1b[31m Error in EGYGUARD Activity:`,
-            `\x1b[32m Invalid or missing timeLeft format in Warframe Cambion API response`,
-          );
-          return "Unknown";
         }
       } catch (error) {
         console.error(
