@@ -93,5 +93,5 @@ module.exports = async (client, config) => {
     }
   }
 
-  setInterval(updateVallisCycle, 30 * 1000); // Update every minute
+  setInterval(updateVallisCycle, 60 * 1000); // Update every minute
 };

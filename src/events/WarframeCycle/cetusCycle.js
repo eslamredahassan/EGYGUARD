@@ -108,5 +108,5 @@ module.exports = async (client, config) => {
     }
   }
 
-  setInterval(updateCetusCycle, 30 * 1000);
+  setInterval(updateCetusCycle, 60 * 1000);
 };

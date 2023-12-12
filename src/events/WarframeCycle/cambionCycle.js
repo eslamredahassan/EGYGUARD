@@ -92,5 +92,5 @@ module.exports = async (client, config) => {
     }
   }
 
-  setInterval(updateCambionCycle, 30 * 1000); // Update every minute
+  setInterval(updateCambionCycle, 60 * 1000); // Update every minute
 };
