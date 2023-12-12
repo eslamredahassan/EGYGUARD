@@ -1,5 +1,5 @@
 const moment = require("moment");
-const axios = require("axios"); // Make sure to install axios using npm install axios
+const axios = require("axios");
 const fs = require("fs");
 const cycleConfig = JSON.parse(fs.readFileSync("./src/config.json"));
 const API = cycleConfig.warframeAPI;
@@ -11,13 +11,14 @@ module.exports = async (client, config) => {
       const { state, timeLeft, shortString } = response.data;
 
       // Use ☀️ for day and 🌙 for night
-      const stateEmoji = state === "day" ? "Night" : "🌙";
-      return `Cetus ${stateEmoji} in ${timeLeft}`;
+      const stateEmoji = state === "day" ? "☀️" : "🌙";
+      return `${stateEmoji}${timeLeft}`;
     } catch (error) {
       console.error("Error fetching Warframe world time:", error);
       return "Unknown";
     }
   }
+
   async function getVallisCycle() {
     try {
       const response = await axios.get(API.vallisAPI);
@@ -25,7 +26,7 @@ module.exports = async (client, config) => {
 
       // Use ☀️ for warm and ❄ for cold
       const stateEmoji = state === "warm" ? "☀️" : "❄️";
-      return `Orb Vallis ${stateEmoji} for ${timeLeft}`;
+      return `${stateEmoji}${timeLeft}`;
     } catch (error) {
       console.error("Error fetching Warframe world time:", error);
       return "Unknown";
@@ -39,50 +40,29 @@ module.exports = async (client, config) => {
 
       // Use ☀️ for warm and ❄ for cold
       const stateEmoji = state === "warm" ? "💥" : "💦";
-      return `Cambion ${stateEmoji} for ${timeLeft}`;
+      return `${stateEmoji}${timeLeft}`;
     } catch (error) {
       console.error("Error fetching Warframe world time:", error);
       return "Unknown";
     }
   }
-  let membersCount = client.guilds.cache
-    .map((guild) => guild.memberCount)
-    .reduce((a, b) => a + b, 0);
 
   async function pickPresence() {
     const cetusCycle = await getWarframeCetus();
     const vallisCycle = await getVallisCycle();
     const cambionCycle = await getCambionCycle();
 
-    const statusArray = [
-      {
-        type: "WATCHING",
-        content: `${cetusCycle}`,
-        status: "idle",
-      },
-      {
-        type: "WATCHING",
-        content: `${vallisCycle}`,
-        status: "idle",
-      },
-      {
-        type: "WATCHING",
-        content: `${cambionCycle}`,
-        status: "idle",
-      },
-    ];
+    const presenceString = `${cetusCycle} • ${vallisCycle} • ${cambionCycle}`;
 
-    const option = Math.floor(Math.random() * statusArray.length);
     try {
       await client.user.setPresence({
         activities: [
           {
-            name: statusArray[option].content,
-            type: statusArray[option].type,
-            url: statusArray[option].url,
+            name: presenceString,
+            type: "WATCHING",
           },
         ],
-        status: statusArray[option].status,
+        status: "idle",
       });
     } catch (error) {
       console.error(error);

@@ -1,45 +1,57 @@
 const axios = require("axios");
 const fs = require("fs");
-const config = require("../../../src/config.js");
-
 const cycleConfig = JSON.parse(fs.readFileSync("./src/config.json"));
-const API = cycleConfig.warframeAPI;
-const Channel = cycleConfig.WarframeCycle;
-
-const GUILD_ID = config.guildID;
-const WARM_EMOJI = "🔥";
-const COLD_EMOJI = "❄️";
 
 module.exports = async (client, config) => {
+  const API = cycleConfig.warframeAPI;
+  const Channel = cycleConfig.WarframeCycle;
+
+  const WARM_EMOJI = "🔥";
+  const COLD_EMOJI = "❄️";
+
   async function updateVallisCycle() {
     try {
       const response = await axios.get(API.vallisAPI);
       const isWarm = response.data.isWarm;
-      const timeLeft = response.data.timeLeft;
+      const timeLeftString = response.data.timeLeft || "Unknown"; // Use shortString here
 
-      if (timeLeft !== undefined) {
-        const vallisCycle = isWarm
-          ? `${WARM_EMOJI}︱Warm`
-          : `${COLD_EMOJI}︱Cold`;
+      if (timeLeftString !== undefined) {
+        const timeComponents = timeLeftString.match(/(\d+)m (\d+)s/);
 
-        const guild = client.guilds.cache.get(GUILD_ID);
-        if (!guild) {
-          console.log("Guild not found in cache.");
-          return;
-        }
+        if (timeComponents) {
+          const minutes = parseInt(timeComponents[1], 10);
+          //const seconds = parseInt(timeComponents[2], 10);
 
-        const channel = guild.channels.cache.get(Channel.vallis);
-        if (channel && channel.type === "GUILD_VOICE") {
-          await channel.setName(`${vallisCycle} ${timeLeft}`);
-          console.log(
-            `Updated voice channel name to Vallis Cycle: ${vallisCycle}`,
-          );
+          let timeLeft = "";
+          if (minutes > 0) {
+            timeLeft += `${minutes}m`;
+          }
+
+          const vallisCycle = isWarm
+            ? `${WARM_EMOJI}︱Warm`
+            : `${COLD_EMOJI}︱Cold`;
+
+          const guild = client.guilds.cache.get(config.guildID);
+          if (!guild) {
+            console.log("Guild not found in cache.");
+            return;
+          }
+
+          const channel = guild.channels.cache.get(Channel.vallis);
+          if (channel && channel.type === "GUILD_VOICE") {
+            await channel.setName(`${vallisCycle} ${timeLeft}`);
+            console.log(
+              `Updated voice channel name to Vallis Cycle: ${vallisCycle} ${timeLeft}`,
+            );
+          } else {
+            console.log("Voice channel not found or invalid channel type.");
+          }
         } else {
-          console.log("Voice channel not found or invalid channel type.");
+          console.log("Time string format does not match expected pattern.");
         }
       } else {
         console.log(
-          "Time left is undefined in the Vallis API response:",
+          "shortString is undefined in the Vallis API response:",
           response,
         );
       }

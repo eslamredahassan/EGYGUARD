@@ -122,5 +122,5 @@ module.exports = async (client, config) => {
   }
 
   // Set interval to update every minute (adjust as needed)
-  interval = setInterval(updateBaroKiTeer, 5000);
+  interval = setInterval(updateBaroKiTeer, 60 * 1000);
 };
