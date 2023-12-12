@@ -9,6 +9,18 @@ module.exports = async (client, config) => {
 
   const DAY_EMOJI = "☀️";
   const NIGHT_EMOJI = "🌙";
+  const mockResponse = {
+    data: {
+      id: "cetusCycle1702351800000",
+      expiry: "2023-12-12T03:30:00.000Z",
+      activation: "2023-12-12T01:50:00.000Z",
+      isDay: true,
+      state: "day",
+      timeLeft: "1h 40m 4s",
+      isCetus: true,
+      shortString: "40m to Night",
+    },
+  };
 
   async function updateCetusCycle() {
     try {
@@ -18,19 +30,22 @@ module.exports = async (client, config) => {
       const timeLeftString = response.data.timeLeft;
 
       if (timeLeftString !== undefined) {
-        const timeComponents = timeLeftString.match(/(\d+)m (\d+)s/);
+        const timeComponents = timeLeftString.match(
+          /(\d+h)? ?(\d+m)? ?(\d+s)?/,
+        );
 
         if (timeComponents) {
-          const minutes = parseInt(timeComponents[1], 10);
-          const hours = Math.floor(minutes / 60);
-          const remainingMinutes = minutes % 60;
+          const hours = parseInt(timeComponents[1], 10) || 0;
+          const minutes = parseInt(timeComponents[2], 10) || 0;
+          const seconds = parseInt(timeComponents[3], 10) || 0;
 
           let timeString = "";
           if (hours > 0) {
             timeString += `${hours}h `;
           }
-          if (remainingMinutes > 0 || hours === 0) {
-            timeString += `${remainingMinutes}m`;
+
+          if (minutes > 0 || hours > 0) {
+            timeString += `${minutes}m`;
           }
 
           const cetusCycle =

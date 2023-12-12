@@ -10,26 +10,26 @@ module.exports = async (client, config) => {
       try {
         const response = await axios.get(API.cetusAPI);
         const { state, timeLeft } = response.data;
-    
+
         // Use ☀️ for day and 🌙 for night
         const stateEmoji = state === "day" ? "☀️" : "🌙";
-    
+
         if (timeLeft && /((\d+)h )?(\d+)m (\d+)s/.test(timeLeft)) {
           // Extract hours, minutes, and seconds
           const timeComponents = timeLeft.match(/((\d+)h\s*)?(\d+)m\s*(\d+)s/);
           const hours = parseInt(timeComponents[2], 10) || 0;
           const minutes = parseInt(timeComponents[3], 10);
-          
+
           let formattedTimeLeft = "";
-        
+
           // Display hours if it's not 0
           if (hours > 0) {
             formattedTimeLeft += `${hours}h `;
           }
-        
+
           // Display minutes
           formattedTimeLeft += `${minutes}m`;
-        
+
           return `${stateEmoji}${formattedTimeLeft}`;
         } else {
           console.error(
@@ -53,15 +53,14 @@ module.exports = async (client, config) => {
         return "Unknown";
       }
     }
-    
     async function getVallisCycle() {
       try {
         const response = await axios.get(API.vallisAPI);
         const { state, timeLeft } = response.data;
-    
+
         // Use ☀️ for warm and ❄ for cold
         const stateEmoji = state === "warm" ? "🔥" : "❄️";
-    
+
         // Check if timeLeft is not null and in the expected format
         if (timeLeft && /\d+m \d+s/.test(timeLeft)) {
           // Remove seconds
@@ -74,7 +73,7 @@ module.exports = async (client, config) => {
             `\x1b[33m ${moment(Date.now()).format("LT")}`,
             `\x1b[31m Error in EGYGUARD Activity:`,
             `\x1b[32m Invalid or missing timeLeft format in Warframe Vallis API response`,
-          )
+          );
           return "Unknown";
         }
       } catch (error) {
@@ -84,19 +83,19 @@ module.exports = async (client, config) => {
           `\x1b[33m ${moment(Date.now()).format("LT")}`,
           `\x1b[31m Error in EGYGUARD Activity:`,
           `\x1b[32m ${error.message}`,
-        )
+        );
         return "Unknown";
       }
     }
-    
+
     async function getCambionCycle() {
       try {
         const response = await axios.get(API.cambionAPI);
         const { state, timeLeft } = response.data;
-    
+
         // Use ☀️ for warm and ❄ for cold
         const stateEmoji = state === "warm" ? "💥" : "💦";
-    
+
         // Check if timeLeft is not null and in the expected format
         if (timeLeft && /\d+m \d+s/.test(timeLeft)) {
           // Remove seconds
@@ -109,7 +108,7 @@ module.exports = async (client, config) => {
             `\x1b[33m ${moment(Date.now()).format("LT")}`,
             `\x1b[31m Error in EGYGUARD Activity:`,
             `\x1b[32m Invalid or missing timeLeft format in Warframe Cambion API response`,
-          )
+          );
           return "Unknown";
         }
       } catch (error) {
@@ -119,7 +118,7 @@ module.exports = async (client, config) => {
           `\x1b[33m ${moment(Date.now()).format("LT")}`,
           `\x1b[31m Error in EGYGUARD Activity:`,
           `\x1b[32m ${error.message}`,
-        )
+        );
         return "Unknown";
       }
     }
@@ -127,9 +126,9 @@ module.exports = async (client, config) => {
       const cetusCycle = await getWarframeCetus();
       const vallisCycle = await getVallisCycle();
       const cambionCycle = await getCambionCycle();
-  
+
       const presenceString = `${cetusCycle} • ${vallisCycle} • ${cambionCycle}`;
-  
+
       try {
         await client.user.setPresence({
           activities: [
@@ -151,9 +150,9 @@ module.exports = async (client, config) => {
       }
     }
 
-  setInterval(pickPresence, 10 * 1000); // Update every 10 seconds
+    setInterval(pickPresence, 10 * 1000); // Update every 10 seconds
   } catch (error) {
-      console.error(
+    console.error(
       `\x1b[0m`,
       `\x1b[33m 〢`,
       `\x1b[33m ${moment(Date.now()).format("LT")}`,
