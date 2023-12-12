@@ -1,5 +1,6 @@
 const axios = require("axios");
 const fs = require("fs");
+const moment = require("moment");
 const cycleConfig = JSON.parse(fs.readFileSync("./src/config.json"));
 
 module.exports = async (client, config) => {
@@ -20,11 +21,17 @@ module.exports = async (client, config) => {
 
         if (timeComponents) {
           const minutes = parseInt(timeComponents[1], 10);
+          const hours = Math.floor(minutes / 60);
+          const remainingMinutes = minutes % 60;
+
           //const seconds = parseInt(timeComponents[2], 10);
 
-          let timeLeft = "";
-          if (minutes > 0) {
-            timeLeft += `${minutes}m`;
+          let timeString = "";
+          if (hours > 0) {
+            timeString += `${hours}h `;
+          }
+          if (remainingMinutes > 0 || hours === 0) {
+            timeString += `${remainingMinutes}m`;
           }
 
           const vallisCycle = isWarm
@@ -39,13 +46,13 @@ module.exports = async (client, config) => {
 
           const channel = guild.channels.cache.get(Channel.vallis);
           if (channel && channel.type === "GUILD_VOICE") {
-            await channel.setName(`${vallisCycle} ${timeLeft}`);
+            await channel.setName(`${vallisCycle} ${timeString}`);
             console.log(
               `\x1b[0m`,
               `\x1b[33m 〢`,
               `\x1b[33m ${moment(Date.now()).format("LT")}`,
-              `\x1b[31m Vallis Cycle:`,
-              `\x1b[32m ${vallisCycle} ${timeLeft}`,
+              `\x1b[31m Vallis Cycle`,
+              `\x1b[32m ${vallisCycle} ${timeString}`,
             );
           } else {
             console.log(
@@ -86,5 +93,5 @@ module.exports = async (client, config) => {
     }
   }
 
-  setInterval(updateVallisCycle, 60 * 1000); // Update every minute
+  setInterval(updateVallisCycle, 30 * 1000); // Update every minute
 };

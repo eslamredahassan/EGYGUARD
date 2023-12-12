@@ -1,5 +1,6 @@
 const axios = require("axios");
 const fs = require("fs");
+const moment = require("moment");
 const cycleConfig = JSON.parse(fs.readFileSync("./src/config.json"));
 
 module.exports = async (client, config) => {
@@ -35,6 +36,8 @@ module.exports = async (client, config) => {
           const cetusCycle =
             state === "Day" ? `${DAY_EMOJI}︱Day` : `${NIGHT_EMOJI}︱Night`;
 
+          const finalString = `${cetusCycle} ${timeString}`;
+
           const guild = client.guilds.cache.get(config.guildID);
           if (!guild) {
             console.log("Guild not found in cache.");
@@ -43,13 +46,13 @@ module.exports = async (client, config) => {
 
           const channel = guild.channels.cache.get(Channel.cetus);
           if (channel && channel.type === "GUILD_VOICE") {
-            await channel.setName(`${cetusCycle} ${timeString}`);
+            await channel.setName(finalString); // Set the channel name directly
             console.log(
               `\x1b[0m`,
               `\x1b[33m 〢`,
               `\x1b[33m ${moment(Date.now()).format("LT")}`,
-              `\x1b[31m Cetus Cycle:`,
-              `\x1b[32m ${cetusCycle} ${timeString}`,
+              `\x1b[31m Cetus Cycle`,
+              `\x1b[32m ${finalString}`,
             );
           } else {
             console.log(
@@ -90,5 +93,5 @@ module.exports = async (client, config) => {
     }
   }
 
-  setInterval(updateCetusCycle, 60 * 1000);
+  setInterval(updateCetusCycle, 30 * 1000);
 };

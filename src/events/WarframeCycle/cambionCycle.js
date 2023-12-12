@@ -1,5 +1,6 @@
 const axios = require("axios");
 const fs = require("fs");
+const moment = require("moment");
 const cycleConfig = JSON.parse(fs.readFileSync("./src/config.json"));
 
 module.exports = async (client, config) => {
@@ -27,7 +28,7 @@ module.exports = async (client, config) => {
           if (hours > 0) {
             timeLeft += `${hours}h `;
           }
-          if (remainingMinutes > 0 || hours === 0) {
+          if (remainingMinutes > 0 || hours > 0) {
             timeLeft += `${remainingMinutes}m`;
           }
 
@@ -49,7 +50,7 @@ module.exports = async (client, config) => {
               `\x1b[0m`,
               `\x1b[33m 〢`,
               `\x1b[33m ${moment(Date.now()).format("LT")}`,
-              `\x1b[31m Cambion Cycle:`,
+              `\x1b[31m Cambion Cycle`,
               `\x1b[32m ${cambionCycle} ${timeLeft}`,
             );
           } else {
@@ -91,5 +92,5 @@ module.exports = async (client, config) => {
     }
   }
 
-  setInterval(updateCambionCycle, 60 * 1000); // Update every minute
+  setInterval(updateCambionCycle, 30 * 1000); // Update every minute
 };
