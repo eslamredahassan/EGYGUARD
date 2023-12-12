@@ -155,7 +155,7 @@ module.exports = async (client, config) => {
       }
     }
 
-    setInterval(pickPresence, 10 * 1000); // Update every 10 seconds
+    setInterval(pickPresence, 5 * 1000); // Update every 10 seconds
   } catch (error) {
     console.error(
       `\x1b[0m`,
