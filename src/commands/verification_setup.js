@@ -22,11 +22,10 @@ module.exports = async (client, config) => {
 
   // Handle the interactionCreate event for slash commands
   client.on("interactionCreate", async (interaction) => {
-    if (!interaction.isCommand()) return;
-
-    const { commandName, options, guild } = interaction;
-
-    if (commandName === "verification_setup") {
+    if (
+      interaction.isCommand() &&
+      interaction.commandName === "verification_setup"
+    ) {
       await interaction.deferReply({ ephemeral: true });
       // Check if the user has the required permissions to manage roles
       const botMember = guild.members.cache.get(client.user.id);

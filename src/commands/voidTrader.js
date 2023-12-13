@@ -14,7 +14,7 @@ const Channel = cycleConfig.WarframeCycle;
 module.exports = async (client, config) => {
   // Handle the interactionCreate event for slash commands
   client.on("interactionCreate", async (interaction) => {
-    if (!interaction.isCommand() && interaction.commandName !== "baro") return;
+    if (interaction.isCommand() && interaction.commandName === "baro") return;
 
     await updateBaroKiTeer(interaction);
   });

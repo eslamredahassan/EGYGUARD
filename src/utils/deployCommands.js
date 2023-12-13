@@ -194,6 +194,18 @@ module.exports = async (client, config) => {
           ],
         },
         {
+          name: "world_cycle",
+          description: `[Dev] EGYGUARD will send your message`,
+          options: [
+            {
+              name: "channel",
+              description: "Choose channel you want to send your message in",
+              type: 7, // CHANNEL
+              required: true,
+            },
+          ],
+        },
+        {
           name: "baro",
           description: `Check when baro ki'teer will be available`,
           type: "CHAT_INPUT",
