@@ -5,7 +5,7 @@ const cycleConfig = JSON.parse(fs.readFileSync("./src/config.json"));
 const API = cycleConfig.warframeAPI;
 
 // Retry function for API requests
-async function retryRequest(apiEndpoint, maxRetries = 3) {
+async function retryRequest(apiEndpoint, maxRetries = 5) {
   let retries = 0;
   while (retries < maxRetries) {
     try {
