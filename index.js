@@ -30,7 +30,6 @@ client.on("ready", async () => {
   server(client, config);
   antiCrash(client, config);
   deployCommands(client, config);
-
   console.log(
     `\x1b[0m`,
     `\x1b[33m 〢`,
