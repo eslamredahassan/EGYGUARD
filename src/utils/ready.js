@@ -4,12 +4,28 @@ const fs = require("fs");
 const cycleConfig = JSON.parse(fs.readFileSync("./src/config.json"));
 const API = cycleConfig.warframeAPI;
 
+// Retry function for API requests
+async function retryRequest(apiEndpoint, maxRetries = 3) {
+  let retries = 0;
+  while (retries < maxRetries) {
+    try {
+      const response = await axios.get(apiEndpoint);
+      return response.data;
+    } catch (error) {
+      console.error(`Retry ${retries + 1}: ${error.message}`);
+      retries++;
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1 second before retrying
+    }
+  }
+  throw new Error(`Failed after ${maxRetries} retries`);
+}
+
 module.exports = async (client, config) => {
   try {
     async function getWarframeCetus() {
       try {
-        const response = await axios.get(API.cetusAPI);
-        const { state, timeLeft } = response.data;
+        const response = await retryRequest(API.cetusAPI);
+        const { state, timeLeft } = response;
 
         // Use ☀️ for day and 🌙 for night
         const stateEmoji = state === "day" ? "☀️" : "🌙";
@@ -54,10 +70,11 @@ module.exports = async (client, config) => {
         return "Unknown";
       }
     }
+
     async function getVallisCycle() {
       try {
-        const response = await axios.get(API.vallisAPI);
-        const { state, timeLeft } = response.data;
+        const response = await retryRequest(API.vallisAPI);
+        const { state, timeLeft } = response;
 
         // Use ☀️ for warm and ❄ for cold
         const stateEmoji = state === "warm" ? "🔥" : "❄️";
@@ -91,8 +108,8 @@ module.exports = async (client, config) => {
 
     async function getCambionCycle() {
       try {
-        const response = await axios.get(API.cambionAPI);
-        const { state, timeLeft } = response.data;
+        const response = await retryRequest(API.cambionAPI);
+        const { state, timeLeft } = response;
 
         // Use ☀️ for warm and ❄ for cold
         const stateEmoji = state === "warm" ? "💥" : "💦";
@@ -127,6 +144,7 @@ module.exports = async (client, config) => {
         return "Unknown";
       }
     }
+
     async function pickPresence() {
       const cetusCycle = await getWarframeCetus();
       const vallisCycle = await getVallisCycle();
@@ -155,7 +173,7 @@ module.exports = async (client, config) => {
       }
     }
 
-    setInterval(pickPresence, 5 * 1000); // Update every 10 seconds
+    setInterval(pickPresence, 10 * 1000); // Update every 10 seconds
   } catch (error) {
     console.error(
       `\x1b[0m`,
