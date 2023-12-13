@@ -9,28 +9,28 @@ const API = cycleConfig.warframeAPI;
 const emoji = settings.emoji;
 const color = settings.color;
 
-// Retry function for API requests
-async function retryRequest(apiEndpoint, maxRetries = 5) {
-  let retries = 0;
-  while (retries < maxRetries) {
-    try {
-      const response = await axios.get(apiEndpoint);
-      return response.data;
-    } catch (error) {
-      console.error(`Retry ${retries + 1}: ${error.message}`);
-      retries++;
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1 second before retrying
-    }
-  }
-  throw new Error(`Failed after ${maxRetries} retries`);
-}
-
 module.exports = async (client, config) => {
+  // Retry function for API requests
+  async function retryRequest(apiEndpoint, maxRetries = 5) {
+    let retries = 0;
+    while (retries < maxRetries) {
+      try {
+        const response = await axios.get(apiEndpoint);
+        return response.data;
+      } catch (error) {
+        console.error(`Retry ${retries + 1}: ${error.message}`);
+        retries++;
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1 second before retrying
+      }
+    }
+    throw new Error(`Failed after ${maxRetries} retries`);
+  }
   let cycleMessageId; // Variable to store the ID of the sent embed
+
   client.on("interactionCreate", async (interaction) => {
     if (interaction.isCommand() && interaction.commandName === "world_cycle") {
-      await interaction.deferReply({ ephemeral: true });
       try {
+        await interaction.deferReply({ ephemeral: true });
         // Access the 'channel' option correctly
         const channel = interaction.options.getChannel("channel");
 
@@ -169,33 +169,77 @@ module.exports = async (client, config) => {
           const presenceString = `${cetusCycle} • ${vallisCycle} • ${cambionCycle}`;
 
           try {
-            // If the message ID is available, edit the existing message
-            if (cycleMessageId) {
-              const cycle = new MessageEmbed()
-                .setTitle(" ")
-                .setDescription(`${emoji.mark} ${presenceString}`)
-                .setColor(color.gray);
+            const cetusCycle = await getWarframeCetus();
+            const vallisCycle = await getVallisCycle();
+            const cambionCycle = await getCambionCycle();
 
-              // Edit the existing message
-              await channel.messages.edit(cycleMessageId, {
-                embeds: [cycle],
+            // Create individual embeds for each cycle
+            const cetusEmbed = new MessageEmbed()
+              .setTitle("Cetus Cycle")
+              .setDescription(`${emoji.mark} ${cetusCycle}`)
+              .setColor(color.gray);
+
+            const vallisEmbed = new MessageEmbed()
+              .setTitle("Vallis Cycle")
+              .setDescription(`${emoji.mark} ${vallisCycle}`)
+              .setColor(color.gray);
+
+            const cambionEmbed = new MessageEmbed()
+              .setTitle("Cambion Drift Cycle")
+              .setDescription(`${emoji.mark} ${cambionCycle}`)
+              .setColor(color.gray);
+
+            // Send or edit messages based on whether the message IDs are available
+            if (cycleMessageId) {
+              await channel.messages.edit(cycleMessageId.cetus, {
+                embeds: [cetusEmbed],
+                components: [],
+              });
+
+              await channel.messages.edit(cycleMessageId.vallis, {
+                embeds: [vallisEmbed],
+                components: [],
+              });
+
+              await channel.messages.edit(cycleMessageId.cambion, {
+                embeds: [cambionEmbed],
                 components: [],
               });
             } else {
-              // Send the initial message
-              const cycle = new MessageEmbed()
-                .setTitle(" ")
-                .setDescription(`${emoji.mark} ${presenceString}`)
-                .setColor(color.gray);
-
-              const message = await channel.send({
-                embeds: [cycle],
+              const cetusMessage = await channel.send({
+                embeds: [cetusEmbed],
                 components: [],
               });
 
-              // Store the message ID for future edits
-              cycleMessageId = message.id;
+              const vallisMessage = await channel.send({
+                embeds: [vallisEmbed],
+                components: [],
+              });
+
+              const cambionMessage = await channel.send({
+                embeds: [cambionEmbed],
+                components: [],
+              });
+
+              // Store the message IDs for future edits
+              cycleMessageId = {
+                cetus: cetusMessage.id,
+                vallis: vallisMessage.id,
+                cambion: cambionMessage.id,
+              };
             }
+
+            // Reply to the user to check their DM for the verification process
+            await interaction.editReply({
+              embeds: [
+                {
+                  description: `${emoji.mark} The verification system has been set up in <#${channel.id}>`,
+                  color: color.gray,
+                },
+              ],
+              ephemeral: true,
+              components: [],
+            });
           } catch (error) {
             console.error(
               `\x1b[0m`,
@@ -206,19 +250,6 @@ module.exports = async (client, config) => {
             );
           }
         }
-
-        // Reply to the user to check their DM for the verification process
-        await interaction.editReply({
-          embeds: [
-            {
-              description: `${emoji.mark} The verification system has been set up in <#${channel.id}>`,
-              color: color.gray,
-            },
-          ],
-          ephemeral: true,
-          components: [],
-        });
-
         setInterval(pickPresence, 10 * 1000); // Update every 10 seconds
       } catch (error) {
         console.error(
