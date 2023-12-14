@@ -31,9 +31,11 @@ module.exports = async (client, config) => {
         const stateEmoji = state === "day" ? "☀️" : "🌙";
 
         // Update the getWarframeCetus function
-        if (timeLeft && /((\d+)h )?(\d+)m (\d+)s/.test(timeLeft)) {
+        if (timeLeft && /((\d+)h\s*)?(\d+)m(\s*(\d+)s)?/.test(timeLeft)) {
           // Extract hours, minutes, and seconds
-          const timeComponents = timeLeft.match(/((\d+)h\s*)?(\d+)m\s*(\d+)s/);
+          const timeComponents = timeLeft.match(
+            /((\d+)h\s*)?(\d+)m(\s*(\d+)s)?/,
+          );
           const hours = parseInt(timeComponents[2], 10) || 0;
           const minutes = parseInt(timeComponents[3], 10);
 
@@ -80,7 +82,7 @@ module.exports = async (client, config) => {
         const stateEmoji = state === "warm" ? "🔥" : "❄️";
 
         // Check if timeLeft is not null and in the expected format
-        if (/(\d+m \d+s|\d+m)/.test(timeLeft)) {
+        if (timeLeft && /\d+m(\s*\d+s)?/.test(timeLeft)) {
           // Remove seconds
           const formattedTimeLeft = timeLeft.replace(/\d+s$/, "");
           return `${stateEmoji}${formattedTimeLeft}`;
