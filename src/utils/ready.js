@@ -80,7 +80,7 @@ module.exports = async (client, config) => {
         const stateEmoji = state === "warm" ? "🔥" : "❄️";
 
         // Check if timeLeft is not null and in the expected format
-        if (timeLeft && /\d+m \d+s/.test(timeLeft)) {
+        if (/(\d+m \d+s|\d+m)/.test(timeLeft)) {
           // Remove seconds
           const formattedTimeLeft = timeLeft.replace(/\d+s$/, "");
           return `${stateEmoji}${formattedTimeLeft}`;
