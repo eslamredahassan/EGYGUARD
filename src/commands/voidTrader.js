@@ -123,14 +123,6 @@ module.exports = async (client, config) => {
           await interaction.reply("Error updating Baro Ki'Teer status.");
         }
       }
-
-      function formatInventory(inventory) {
-        if (!inventory || inventory.length === 0) {
-          return "No items available.";
-        }
-
-        return inventory.map((item) => `- ${item}`).join("\n");
-      }
       await updateBaroKiTeer(interaction);
     }
   });
