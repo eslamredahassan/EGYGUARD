@@ -164,6 +164,20 @@ module.exports = async (client, config) => {
           ],
         },
         {
+          name: "drop",
+          description: "Delete amount of messages",
+          options: [
+            {
+              name: "item",
+              description: "Type the amount in number ( min: 1 max: 100 )",
+              type: 3, // Integer Type
+              required: true,
+              min_length: 1,
+              max_length: 512,
+            },
+          ],
+        },
+        {
           name: "status",
           description: `[Dev] Check EGYGUARD Uptime`,
           type: "CHAT_INPUT",
