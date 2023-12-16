@@ -13,17 +13,6 @@ const cycleConfig = JSON.parse(fs.readFileSync("./src/config.json"));
 const API = cycleConfig.warframeAPI;
 const Channel = cycleConfig.WarframeCycle;
 
-const mockResponse = {
-  data: {
-    active: true,
-    location: "Strata Relay (Earth)",
-    inventory: ["Primed Flow", "Primed Ammo Stock", "Primed Animal Instinct"],
-    activation: "2023-12-08T08:22:00.000Z",
-    expiry: "2023-12-17T14:00:00.000Z",
-  },
-};
-let interval;
-
 module.exports = async (client, config) => {
   async function updateBaroKiTeer() {
     try {
@@ -50,16 +39,20 @@ module.exports = async (client, config) => {
             const endTimeStamp = new Date(end).getTime();
 
             const inventoryWithLinks = inventory.map((item, index) => {
-              const wikiLink = `https://warframe.fandom.com/wiki/${encodeURIComponent(
-                item.replace(/\s+/g, "_"),
-              )}`;
-              const mark =
-                index === inventory.length - 1 ? emoji.mark : emoji.midMark;
-              return `${mark} [${item}](${wikiLink})`;
+              if (typeof item === "object" && typeof item.item === "string") {
+                const wikiLink = `https://warframe.fandom.com/wiki/${encodeURIComponent(
+                  item.item.replace(/\s+/g, "_"),
+                )}`;
+                const mark =
+                  index === inventory.length - 1 ? emoji.mark : emoji.midMark;
+                return `${mark} [${item.item}](${wikiLink})`;
+              } else {
+                console.error(`Invalid item format at index ${index}:`, item);
+                return ""; // or handle the error in another way
+              }
             });
 
             const embed = new MessageEmbed()
-              //.setTitle(`${baroCycle} ${isActive ? "has arrived" : "didn't Arrive yet"}`,)
               .setImage("https://i.imgur.com/0KhYPrk.gif")
               .setColor(isActive ? color.gray : color.gray)
               .setDescription(

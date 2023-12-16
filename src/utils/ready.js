@@ -103,6 +103,7 @@ module.exports = async (client, config) => {
           `\x1b[33m ${moment(Date.now()).format("LT")}`,
           `\x1b[31m Error in EGYGUARD Activity:`,
           `\x1b[32m ${error.message}`,
+          `\x1b[32m Actual timeLeft: ${timeLeft}`,
         );
         return "Unknown";
       }
