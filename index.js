@@ -145,7 +145,8 @@ client.once("ready", async () => {
           `\x1b[33m 〢`,
           `\x1b[33m ${moment(Date.now()).format("LT")}`,
           `\x1b[31m System`,
-          `\x1b[32m PINGED ${latency}ms`,
+          `\x1b[32m PINGED`,
+          `\x1b[33m ${latency}ms`,
         );
       })
       .catch((error) => {
