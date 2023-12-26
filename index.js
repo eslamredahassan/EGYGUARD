@@ -129,6 +129,38 @@ client.once("ready", async () => {
 
   const commandsDirectory = path.join(__dirname, "src/commands");
   loadCommands(commandsDirectory);
+  function keepAlive() {
+    const startTime = Date.now();
+
+    // Replace 'YOUR_BOT_ENDPOINT' with the actual endpoint of your bot
+    fetch("https://23fx77-3000.csb.app", {
+      method: "GET",
+    })
+      .then((response) => {
+        const endTime = Date.now();
+        const latency = endTime - startTime;
+
+        console.info(
+          `\x1b[0m`,
+          `\x1b[33m 〢`,
+          `\x1b[33m ${moment(Date.now()).format("LT")}`,
+          `\x1b[31m System`,
+          `\x1b[32m PINGED ${latency}ms`,
+        );
+      })
+      .catch((error) => {
+        console.error(
+          `\x1b[0m`,
+          `\x1b[33m 〢`,
+          `\x1b[33m ${moment(Date.now()).format("LT")}`,
+          `\x1b[31m Error while pinging bot:`,
+          `\x1b[35m$ ${error.message}`,
+        );
+      });
+  }
+
+  // Ping the bot every 5 minutes (adjust the interval as needed)
+  setInterval(keepAlive, 1 * 60 * 1000);
 });
 
 client
