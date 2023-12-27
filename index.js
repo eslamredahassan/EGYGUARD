@@ -161,7 +161,7 @@ client.once("ready", async () => {
   }
 
   // Ping the bot every 5 minutes (adjust the interval as needed)
-  setInterval(keepAlive, 1 * 60 * 1000);
+  setInterval(keepAlive, 1 * 20 * 1000);
 });
 
 client
