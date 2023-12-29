@@ -129,6 +129,7 @@ client.once("ready", async () => {
 
   const commandsDirectory = path.join(__dirname, "src/commands");
   loadCommands(commandsDirectory);
+
   function keepAlive() {
     const startTime = Date.now();
 
